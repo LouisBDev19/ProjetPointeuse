@@ -1,0 +1,71 @@
+﻿@using APIPointeuse.Models;
+@using ApplicationWebPointeuse.Common;
+@{
+    ViewData["Title"] = "Étudiants";
+    var students = ViewData["Students"] as List<Students>;
+}
+
+<h1>Étudiants</h1>
+
+<br />
+
+@{
+    Methods methods = new Methods();
+}
+
+    <table id="studentsTable" class="display">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Classe</th>
+                <th>Date de naissance</th>
+                <th>Em@il</th>
+                <th>Portable</th>
+                <th>Actions</th>
+                <th><input type="checkbox" id="mainCheckbox-students" /></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in students)
+            {
+                <tr>
+                    <td>@student.FirstName</td>
+                    <td>@student.LastName</td>
+                    @if (student.IdSchoolclass != null)
+                    {
+                    <td>
+                        @student.Schoolclasses.Cycles.Name
+                        @student.Schoolclasses.Sections.Name
+                        @student.Schoolclasses.Subsections.Name
+                    </td>
+                    }
+                    else
+                    {
+                        <td>
+                            Aucune classe assignée
+                        </td>
+                    }
+                    <td>@student.BirthDate.ToShortDateString()</td>
+                    <td><a class="button" href="mailto:@student.Email">@student.Email</a></td>
+                <td><a class="button" href="tel:@student.PhoneNumber">@methods.FormatPhoneNumber(student?.PhoneNumber)</a></td>
+                    <td>
+                        <a class="button" href="@Url.Action("DisplayStudent", "Students", new { id = student.Id })">
+                            <i class="far fa-eye fa-xl" id="info-@student.Id"></i>
+                        </a>
+                        <a class="button" href="@Url.Action("DisplayStudentPDF", "Students", new { id = student.Id })">
+                            <i class="fa-solid fa-file-pdf fa-xl" style="color: #f40000;" id="pdf-@student.Id"></i>
+                        </a>
+                    </td>
+                    <td><input type="checkbox" id="subCheckbox-@student.Id-students" value="@student.Id" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+<button id="generate-pdf" class="clean-button"><i class="fa-solid fa-file-pdf fa-2xl" style="color: #4313ecb0;"></i>Générer des PDF</button>
+
+@section Scripts {
+    <script src="~/js/dataTables.js"></script>
+    <script src="~/js/events.js"></script>
+}

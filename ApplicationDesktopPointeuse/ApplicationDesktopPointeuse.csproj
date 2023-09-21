@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\box-archive-solid.png" />
+    <None Remove="Images\file-import-solid.png" />
+    <None Remove="Images\floppy-disk-solid.png" />
+    <None Remove="Images\plus-solid.png" />
+    <None Remove="Images\trash-solid.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\file-import-solid.png" />
+    <Resource Include="Images\plus-solid.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APIPointeuse\APIPointeuse.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\box-archive-solid.png" />
+    <Resource Include="Images\floppy-disk-solid.png" />
+    <Resource Include="Images\trash-solid.png" />
+  </ItemGroup>
+
+</Project>

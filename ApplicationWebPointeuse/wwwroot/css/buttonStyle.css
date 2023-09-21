@@ -1,0 +1,25 @@
+﻿.button {
+    color:inherit;
+}
+.button:hover {
+    color:inherit;
+}
+
+.clean-button {
+    display: inline-block;
+    padding: 0.5em 1em;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #fff;
+    color: #333;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.clean-button:hover {
+    border-color: #999;
+    color: #000;
+}

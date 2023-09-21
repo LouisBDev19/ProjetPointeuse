@@ -1,0 +1,71 @@
+﻿@using APIPointeuse.Models;
+@using System.Globalization;
+@using ApplicationWebPointeuse.Common;
+@{
+    var students = ViewData["Students"] as List<Students>;
+    Methods methods = new Methods();
+}
+
+<h1>Emargements</h1>
+
+<table id="signaturesTable" class="display">
+    <thead>
+        <tr>
+            <th>Eleves</th>
+            <th>Jour</th>
+            <th>Matin</th>
+            <th>Après-midi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in students)
+        {
+            string fullperiodDuration = methods.getFullPeriodDuration(student.Schoolclasses?.Periods);
+
+            List<Dictionary<string, string>> datesPeriods = methods.datesPeriods(student.UniqueDates, student.Schoolclasses?.Periods);
+            string morningIcon = "";
+            string afternoonIcon = "";
+            int i = datesPeriods.Count;
+            foreach (Dictionary<string, string> datePeriods in datesPeriods)
+            {
+                if (methods.ConvertDateTimeLettersToDateTime(datePeriods["day"]) == DateTime.Today)
+                {
+                    morningIcon = $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["morning"]})</span>";
+                    afternoonIcon = $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["afternoon"]})</span>";
+
+                    if(datePeriods["morning"] == "")
+                    {
+                        morningIcon = DateTime.Today.Hour > 12 ? $"<i class='fa-solid fa-hourglass-half fa-2xl' style='color:orange'></i>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+                    }
+                    if (datePeriods["afternoon"] == "")
+                    {
+                        afternoonIcon = DateTime.Today.Hour < 12 ? $"<i class='fa-solid fa-hourglass-half fa-2xl' style='color:orange'></i>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+                    }
+                }
+                else if (methods.ConvertDateTimeLettersToDateTime(datePeriods["day"]) > DateTime.Today)
+                {
+                    morningIcon = datePeriods["morning"] != "" ? "<i class='fa-solid fa-triangle-exclamation fa-2xl' style='color:red'></i>" : "";
+                    afternoonIcon = datePeriods["afternoon"] != "" ? "<i class='fa-solid fa-triangle-exclamation fa-2xl' style='color:red'></i>" : "";
+                }
+                else
+                {
+                    morningIcon = datePeriods["morning"] != "" ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["morning"]})</span>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+                    afternoonIcon = datePeriods["afternoon"] != "" ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["afternoon"]})</span>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+                }
+
+                <tr>
+                    <td>@student.FirstName @student.LastName</td>
+                    <td>@datePeriods["day"]</td>
+                    <td>@Html.Raw($"<span title='{datePeriods["morning"]}'>{morningIcon}</span>")</td>
+                    <td>@Html.Raw($"<span title='{datePeriods["afternoon"]}'>{afternoonIcon}</span>")</td>
+                </tr>
+                i--;
+            }
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/dataTables.js"></script>
+    <script src="~/js/events.js"></script>
+    }

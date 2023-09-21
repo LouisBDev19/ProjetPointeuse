@@ -1,0 +1,93 @@
+﻿<UserControl x:Class="ApplicationDesktopPointeuse.SchoolclassesPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ApplicationDesktopPointeuse"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <DataGrid x:Name="SchoolclassesListGrid" AutoGenerateColumns="False" Margin="209,24,318,24" CanUserAddRows="False" MouseDoubleClick="Get_Periods">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsDeleted}" Value="True">
+                            <Setter Property="Background" Value="Red"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsDeleted}" Value="False">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Cycle">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding DataContext.cyclesList, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding IdCycle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedIndex="0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Section">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding DataContext.sectionsList, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding IdSection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedIndex="0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Sous-section">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding DataContext.subsectionsList, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding IdSubsection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedIndex="0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10">
+            <Button x:Name="AddSchoolclassButton" Click="Add_Schoolclass" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/plus-solid.png" Width="16" Height="16" />
+                    <TextBlock Text="Ajouter une classe" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="SaveSchoolclassButton" Click="Save_Schoolclass" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/floppy-disk-solid.png" Width="16" Height="16" />
+                    <TextBlock Text="Enregistrer" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="ArchiveSchoolclassButton" Click="Archive_Schoolclass" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/box-archive-solid.png" Width="16" Height="16" />
+                    <TextBlock Text="Archiver/Désarchiver" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="DeleteSchoolclassButton" Click="Delete_Schoolclass" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/trash-solid.png" Width="16" Height="16" />
+                    <TextBlock Text="Supprimer" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <ContentControl x:Name="Schoolclasses" Grid.Column="1"/>
+    </Grid>
+</UserControl>

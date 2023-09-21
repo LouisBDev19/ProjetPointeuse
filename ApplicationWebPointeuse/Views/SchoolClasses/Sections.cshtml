@@ -1,0 +1,36 @@
+﻿@using APIPointeuse.Models;
+@{
+    ViewData["Title"] = "Sections";
+    var sections = ViewData["Sections"] as List<Sections>;
+}
+
+<h1>Sections</h1>
+
+    <table id="sectionsTable" class="display">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Actions</th>
+                <th><input type="checkbox" id="mainCheckbox-sections" /></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sectionItem in sections)
+            {
+                <tr>
+                    <td>@sectionItem.Name</td>
+                    <td>
+                        <a class="button" href="@Url.Action("DisplaySection", "SchoolClasses", new { id = sectionItem.Id })">
+                            <i class="far fa-eye fa-xl" id="info-@sectionItem.Id"></i>
+                        </a>
+                    </td>
+                    <td><input type="checkbox" id="subCheckbox-@sectionItem.Id-sections" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @section Scripts {
+    <script src="~/js/dataTables.js"></script>
+    <script src="~/js/events.js"></script>
+    }

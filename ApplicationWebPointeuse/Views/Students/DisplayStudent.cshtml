@@ -1,0 +1,166 @@
+﻿@using APIPointeuse.Models;
+@using System.Globalization;
+@using ApplicationWebPointeuse.Common;
+@{
+    var student = ViewData["Student"] as Students;
+    var uniqueDates = ViewData["UniqueDates"] as List<Dictionary<string, DateTime?>>;
+    string studentName = "introuvable";
+    if(student != null)
+    {
+        studentName = student.FirstName + ' ' + student.LastName;
+    }
+    ViewData["Title"] = $@"Étudiant {studentName}";
+    Methods methods = new Methods();
+}
+<h1>@ViewData["Title"]</h1>
+
+<fieldset style="border:1px solid black;background-color:antiquewhite">
+    <legend>Informations personnelles</legend>
+    <table>
+        <tr>
+            <td>
+                Prénom :
+            </td>
+            <td>
+                <input type="text" disabled value="@student.FirstName" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Nom :
+            </td>
+            <td>
+                <input type="text" disabled value="@student.LastName" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Date de naissance :
+            </td>
+            <td>
+                <input type="text" disabled value="@student.BirthDate.ToShortDateString()" />
+            </td>
+            <td>
+                @{
+                    int age = DateTime.Today.Year - student.BirthDate.Year;
+                    if(student.BirthDate.Date > DateTime.Today.AddYears(-age))
+                    {
+                        age--;
+                    }
+                }
+                @age ans
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Em@il :
+            </td>
+            <td>
+                <input type="text" disabled value="@student.Email" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Portable :
+            </td>
+            <td>
+                <input type="text" disabled value="@methods.FormatPhoneNumber(student?.PhoneNumber)" />
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<br />
+
+<fieldset style="border:1px solid black;background-color:antiquewhite">
+    <legend>Informations scolaires</legend>
+    <table>
+        <tr>
+                @{
+                    bool displaySchoolclass = student.IdSchoolclass != null ? true : false;
+                }
+                @if (displaySchoolclass)
+                {
+                    <td>
+                        Classe :
+                    </td>
+                    <td>
+                        <input type="text" disabled value="@student.Schoolclasses.Cycles.Name @student.Schoolclasses.Sections.Name @student.Schoolclasses.Subsections.Name" />
+                    </td>
+                }
+                else
+                {
+                    <p>Aucune classe assignée</p>
+                }
+        </tr>
+    </table>
+</fieldset>
+<br />
+
+@{
+    string fullperiodDuration = methods.getFullPeriodDuration(student.Schoolclasses?.Periods);
+}
+
+<fieldset style="border:1px solid black;background-color:honeydew">
+    <legend>Émargement <span style="font-size:80%">@Html.Raw(fullperiodDuration)</span></legend>
+    <a class="button" href="@Url.Action("DisplayStudentPDF", "Students", new { id = student.Id })">
+        <i class="fa-solid fa-file-pdf fa-2xl" style="color: #f40000;" id="pdf-@student.Id"></i>
+    </a>
+    <table id="arrivalDateTimeTable" class="display">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Jour</th>
+                <th>Matin</th>
+                <th>Après-midi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                List<Dictionary<string, string>> datesPeriods = methods.datesPeriods(uniqueDates, student.Schoolclasses?.Periods);
+                string morningIcon = "";
+                string afternoonIcon = "";
+                int i = datesPeriods.Count;
+                foreach (Dictionary<string, string> datePeriods in datesPeriods)
+                {
+                    if (methods.ConvertDateTimeLettersToDateTime(datePeriods["day"]) == DateTime.Today)
+                    {
+                        morningIcon = $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["morning"]})</span>";
+                        afternoonIcon = $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["afternoon"]})</span>";
+
+                        if(datePeriods["morning"] == "")
+                        {
+                            morningIcon = DateTime.Today.Hour > 12 ? $"<i class='fa-solid fa-hourglass-half fa-2xl' style='color:orange'></i>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+                        }
+                        if (datePeriods["afternoon"] == "")
+                        {
+                            afternoonIcon = DateTime.Today.Hour < 12 ? $"<i class='fa-solid fa-hourglass-half fa-2xl' style='color:orange'></i>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+                        }
+                    }
+                    else if (methods.ConvertDateTimeLettersToDateTime(datePeriods["day"]) > DateTime.Today)
+                    {
+                        morningIcon = datePeriods["morning"] != "" ? "<i class='fa-solid fa-triangle-exclamation fa-2xl' style='color:red'></i>" : "";
+                        afternoonIcon = datePeriods["afternoon"] != "" ? "<i class='fa-solid fa-triangle-exclamation fa-2xl' style='color:red'></i>" : "";
+                    }
+                    else
+                    {
+                        morningIcon = datePeriods["morning"] != "" ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["morning"]})</span>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+                        afternoonIcon = datePeriods["afternoon"] != "" ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["afternoon"]})</span>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+                    }
+
+                    <tr>
+                        <td style="visibility:hidden">@i</td>
+                        <td>@datePeriods["day"]</td>
+                        <td>@Html.Raw($"<span title='{datePeriods["morning"]}'>{morningIcon}</span>")</td>
+                        <td>@Html.Raw($"<span title='{datePeriods["afternoon"]}'>{afternoonIcon}</span>")</td>
+                    </tr>
+                    i--;
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+
+@section Scripts {
+    <script src="~/js/dataTables.js"></script>
+    <script src="~/js/events.js"></script>
+}

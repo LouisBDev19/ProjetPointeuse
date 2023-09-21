@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="ApplicationDesktopPointeuse.PeriodsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ApplicationDesktopPointeuse"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <DataGrid x:Name="PeriodsListGrid" AutoGenerateColumns="False" Margin="220,24,234,24" CanUserAddRows="False">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsDeleted}" Value="True">
+                            <Setter Property="Background" Value="Red"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsDeleted}" Value="False">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Id}" Value="0">
+                            <Setter Property="Background" Value="Yellow"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Début">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding BeginningPeriod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayDateStart="1900-01-01" DisplayDateEnd="2099-12-31" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Fin">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding EndingPeriod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayDateStart="1900-01-01" DisplayDateEnd="2099-12-31" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10">
+            <Button x:Name="AddPeriodButton" Click="Add_Period" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/plus-solid.png" Width="16" Height="16" />
+                    <TextBlock Text="Ajouter une période" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="SavePeriodButton" Click="Save_Period" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/floppy-disk-solid.png" Width="16" Height="16" />
+                    <TextBlock Text="Enregistrer" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="ArchivePeriodButton" Click="Archive_Period" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/box-archive-solid.png" Width="16" Height="16" />
+                    <TextBlock Text="Archiver/Désarchiver" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="DeletePeriodButton" Click="Delete_Period" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/trash-solid.png" Width="16" Height="16" />
+                    <TextBlock Text="Supprimer" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="GoBackButton" Click="Go_Back" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/trash-solid.png" Width="16" Height="16" />
+                    <TextBlock Text="Retour" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <ContentControl x:Name="Periods" Grid.Column="1"/>
+    </Grid>
+</UserControl>

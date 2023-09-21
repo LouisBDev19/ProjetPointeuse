@@ -1,0 +1,25 @@
+﻿<Window x:Class="ApplicationDesktopPointeuse.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ApplicationDesktopPointeuse"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="1000" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Background="Orange" Grid.Column="0">
+            <RadioButton x:Name="studentRadioBtn" Content="Élèves" Checked="studentRadioBtn_Checked" Height="25"/>
+            <RadioButton x:Name="schoolclassesRadioBtn" Content="Classes" Checked="schoolclassesRadioBtn_Checked" Height="25"/>
+            <RadioButton x:Name="cyclesRadioBtn" Content="Cycles" Checked="cyclesRadioBtn_Checked" Margin="10,0,0,0" Height="25"/>
+            <RadioButton x:Name="sectionsRadioBtn" Content="Sections" Checked="sectionsRadioBtn_Checked" Margin="10,0,0,0" Height="25"/>
+            <RadioButton x:Name="subsectionsRadioBtn" Content="Sous-sections" Checked="subsectionsRadioBtn_Checked" Margin="10,0,0,0" Height="25"/>
+        </StackPanel>
+
+        <ContentControl x:Name="Main" Grid.Column="1"/>
+    </Grid>
+</Window>

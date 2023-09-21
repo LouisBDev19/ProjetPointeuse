@@ -1,0 +1,58 @@
+﻿@{
+    string appStatusText = "";
+    string appStatusIcon = "";
+    if(ViewBag.ApplicationStatus)
+    {
+        appStatusText = "Borne allumée";
+        appStatusIcon = "<i id='terminalStatus' class='fa-sharp fa-solid fa-plug-circle-check fa-xl' style='color: #008000;'></i>";
+    }
+    else
+    {
+        appStatusText = "Borne éteinte";
+        appStatusIcon = "<i id='terminalStatus' class='fa-sharp fa-solid fa-plug-circle-xmark fa-xl' style='color: #ff0000;'></i>";
+    }
+    <table>
+        <tr>
+            <td>
+                <h3 id="statusText">@appStatusText</h3>
+            </td>
+            <td>
+                <h3>@Html.Raw(appStatusIcon)</h3>
+            </td>
+        </tr>
+    </table>
+}
+
+@section Scripts {
+<script>
+    $(document).ready(function () {
+        function getApplicationStatus() {
+            $.ajax({
+                url: '@Url.Action("GetWinFormsApplicationStatus", "Terminal")',
+                type: 'GET',
+                success: function (data) {
+                        var terminalStatusIcon = $('#terminalStatus');
+                    if(data) {
+                        $('#statusText').text("Borne allumée");
+                        terminalStatusIcon.removeClass("fa-sharp fa-solid fa-plug-circle-xmark fa-xl");
+                        terminalStatusIcon.addClass("fa-sharp fa-solid fa-plug-circle-check fa-xl");
+                        terminalStatusIcon.css('color', '#008000');
+                    }
+                    else {
+                        $('#statusText').text("Borne éteinte");
+                        terminalStatusIcon.removeClass("fa-sharp fa-solid fa-plug-circle-check fa-xl");
+                        terminalStatusIcon.addClass("fa-sharp fa-solid fa-plug-circle-xmark fa-xl");
+                        terminalStatusIcon.css('color', '#ff0000');
+                    }
+                },
+                error: function () {
+                    console.log('Erreur lors du chargement du processus');
+                }
+            });
+        }
+
+        setInterval(getApplicationStatus, 1000);
+    });
+</script>
+
+}

@@ -1,0 +1,38 @@
+﻿@using APIPointeuse.Models;
+@{
+    ViewData["Title"] = "Classes";
+    var schoolclasses = ViewData["Schoolclasses"] as List<Schoolclasses>;
+}
+
+<h1>Classes</h1>
+
+    <table id="schoolclassesTable" class="display">
+        <thead>
+            <tr>
+                <th>Cycle</th>
+                <th>Section</th>
+                <th>Sous-section</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var schoolclass in schoolclasses)
+            {
+                <tr>
+                    <td>@schoolclass.Cycles.Name</td>
+                    <td>@schoolclass.Sections.Name</td>
+                    <td>@schoolclass.Subsections.Name</td>
+                    <td>
+                        <a class="button" href="@Url.Action("DisplaySchoolclass", "Schoolclasses", new { id = schoolclass.Id })">
+                            <i class="far fa-eye fa-xl" id="info-@schoolclass.Id"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @section Scripts {
+    <script src="~/js/dataTables.js"></script>
+    <script src="~/js/events.js"></script>
+    }

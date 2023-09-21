@@ -1,0 +1,82 @@
+﻿@using APIPointeuse.Models;
+@{
+    ViewData["Title"] = "Cycles/Classes";
+    var schoolclasses = ViewData["Schoolclasses"] as List<Schoolclasses>;
+}
+
+<h1>Cycles liés aux classes</h1>
+
+<table id="schoolclassesTable" class="display">
+    <thead>
+        <tr>
+            <th>Cycle</th>
+            <th>Section</th>
+            <th>Sous-section</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var schoolclass in schoolclasses)
+        {
+            <tr>
+                <td>@schoolclass.Cycles.Name</td>
+                <td>@schoolclass.Sections.Name</td>
+                <td>@schoolclass.Subsections.Name</td>
+                <td>
+                    <a class="button" href="@Url.Action("DisplaySchoolclass", "Schoolclasses", new { id = schoolclass.Id })">
+                        <i class="far fa-eye fa-xl" id="info-@schoolclass.Id"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<br />
+
+<h1>Cycles liés aux étudiants</h1>
+
+<table id="studentsTable" class="display">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Date de naissance</th>
+            <th>Em@il</th>
+            <th>Portable</th>
+            <th>Actions</th>
+            <th><input type="checkbox" id="mainCheckbox-students" /></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var schoolclass in schoolclasses)
+        {
+            foreach (var student in schoolclass.Students)
+            {
+                    <tr>
+                        <td>@student.FirstName</td>
+                        <td>@student.LastName</td>
+                        <td>@student.BirthDate.ToShortDateString()</td>
+                        <td><a class="button" href="mailto:@student.Email">@student.Email</a></td>
+                        <td><a class="button" href="tel:@student.PhoneNumber">@student.PhoneNumber</a></td>
+                        <td>
+                            <a class="button" href="@Url.Action("DisplayStudent", "Students", new { id = student.Id })">
+                                <i class="far fa-eye fa-xl" id="info-@student.Id"></i>
+                            </a>
+                            <a class="button" href="@Url.Action("DisplayStudentPDF", "Students", new { id = student.Id })">
+                                <i class="fa-solid fa-file-pdf fa-xl" style="color: #f40000;" id="pdf-@student.Id"></i>
+                            </a>
+                        </td>
+                        <td><input type="checkbox" id="subCheckbox-@student.Id-students" value="@student.Id" /></td>
+                    </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<button id="generate-pdf" class="clean-button"><i class="fa-solid fa-file-pdf fa-2xl" style="color: #4313ecb0;"></i>Générer des PDF</button>
+
+@section Scripts {
+    <script src="~/js/dataTables.js"></script>
+    <script src="~/js/events.js"></script>
+    }

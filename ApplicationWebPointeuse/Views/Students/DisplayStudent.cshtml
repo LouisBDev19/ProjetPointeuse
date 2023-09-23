@@ -122,29 +122,40 @@
                 int i = datesPeriods.Count;
                 foreach (Dictionary<string, string> datePeriods in datesPeriods)
                 {
-                    if (methods.ConvertDateTimeLettersToDateTime(datePeriods["day"]) == DateTime.Today)
-                    {
-                        morningIcon = $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["morning"]})</span>";
-                        afternoonIcon = $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["afternoon"]})</span>";
+                    DateTime currentDate = methods.ConvertDateTimeLettersToDateTime(datePeriods["day"]);
+                    bool isToday = currentDate == DateTime.Today;
+                    bool isFutureDate = currentDate > DateTime.Today;
+                    bool hasMorningPeriod = !string.IsNullOrEmpty(datePeriods["morning"]);
+                    bool hasAfternoonPeriod = !string.IsNullOrEmpty(datePeriods["afternoon"]);
 
-                        if(datePeriods["morning"] == "")
-                        {
-                            morningIcon = DateTime.Today.Hour > 12 ? $"<i class='fa-solid fa-hourglass-half fa-2xl' style='color:orange'></i>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
-                        }
-                        if (datePeriods["afternoon"] == "")
-                        {
-                            afternoonIcon = DateTime.Today.Hour < 12 ? $"<i class='fa-solid fa-hourglass-half fa-2xl' style='color:orange'></i>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
-                        }
-                    }
-                    else if (methods.ConvertDateTimeLettersToDateTime(datePeriods["day"]) > DateTime.Today)
+                    if (isToday)
                     {
-                        morningIcon = datePeriods["morning"] != "" ? "<i class='fa-solid fa-triangle-exclamation fa-2xl' style='color:red'></i>" : "";
-                        afternoonIcon = datePeriods["afternoon"] != "" ? "<i class='fa-solid fa-triangle-exclamation fa-2xl' style='color:red'></i>" : "";
+                        morningIcon = hasMorningPeriod
+                        ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["morning"]})</span>"
+                        : (DateTime.Now.Hour < 12 && datePeriods["morning"] == "")
+                        ? $"<i class='fa-solid fa-hourglass-half fa-2xl' style='color:orange'></i>"
+                        : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+
+                        afternoonIcon = hasAfternoonPeriod
+                        ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["afternoon"]})</span>"
+                        : (DateTime.Now.Hour >= 12 && datePeriods["afternoon"] == "")
+                        ? "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>"
+                        : $"<i class='fa-solid fa-hourglass-half fa-2xl' style='color:orange'></i>";
+                    }
+                    else if (isFutureDate)
+                    {
+                        morningIcon = hasMorningPeriod ? "<i class='fa-solid fa-triangle-exclamation fa-2xl' style='color:red'></i>" : "";
+                        afternoonIcon = hasAfternoonPeriod ? "<i class='fa-solid fa-triangle-exclamation fa-2xl' style='color:red'></i>" : "";
                     }
                     else
                     {
-                        morningIcon = datePeriods["morning"] != "" ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["morning"]})</span>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
-                        afternoonIcon = datePeriods["afternoon"] != "" ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["afternoon"]})</span>" : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+                        morningIcon = hasMorningPeriod
+                        ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["morning"]})</span>"
+                        : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
+
+                        afternoonIcon = hasAfternoonPeriod
+                        ? $"<i class='fa-solid fa-check fa-2xl' style='color:green'></i><span style='white-space:nowrap;font-size:80%'>({datePeriods["afternoon"]})</span>"
+                        : "<i class='fa-solid fa-xmark fa-2xl' style='color:red'></i>";
                     }
 
                     <tr>

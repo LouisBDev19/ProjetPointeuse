@@ -18,6 +18,17 @@ namespace APIPointeuse.Models
         public ICollection<Periods>? Periods { get; set; }
         public bool IsDeleted { get; set; }
         [NotMapped]
-        public string? SchoolclassName { get; set; }
+        public string? SchoolclassName
+        {
+            get
+            {
+                if (Cycles != null && Sections != null && Subsections != null)
+                {
+                    return $"{Cycles.Name} {Sections.Name} {Subsections.Name}";
+                }
+                return "Aucune classe";
+            }
+            set { }
+        }
     }
 }

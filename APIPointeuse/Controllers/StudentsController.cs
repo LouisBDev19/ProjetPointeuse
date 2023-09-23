@@ -78,7 +78,11 @@ namespace APIPointeuse.Controllers
             }
 
             var studentWithSortedPeriods = student.Student;
-            studentWithSortedPeriods.Schoolclasses.Periods = student.SortedPeriods;
+
+            if(student.SortedPeriods.Count > 0)
+            {
+                studentWithSortedPeriods.Schoolclasses.Periods = student.SortedPeriods;
+            }
 
             var uniqueDates = new List<Dictionary<string, DateTime?>>();
 
@@ -132,10 +136,14 @@ namespace APIPointeuse.Controllers
             foreach (var student in students)
             {
                 var studentWithSortedPeriods = student;
-                studentWithSortedPeriods.Schoolclasses.Periods = student.Schoolclasses.Periods
-                    .Where(p => !p.IsDeleted)
-                    .OrderBy(p => p.BeginningPeriod)
-                    .ToList();
+
+                if(student.Schoolclasses != null)
+                {
+                    studentWithSortedPeriods.Schoolclasses.Periods = student.Schoolclasses.Periods
+                        .Where(p => !p.IsDeleted)
+                        .OrderBy(p => p.BeginningPeriod)
+                        .ToList();
+                }
 
                 student.UniqueDates = new List<Dictionary<string, DateTime?>>();
 

@@ -54,13 +54,11 @@ namespace ApplicationDesktopPointeuse
 
                     foreach (var schoolclass in schoolclasses)
                     {
-                        schoolclass.SchoolclassName = schoolclass.Cycles.Name + ' ' + schoolclass.Sections.Name + ' ' + schoolclass.Subsections.Name;
                         schoolclassesList.Add(schoolclass);
                     }
                     Schoolclasses noneSchoolclass = new Schoolclasses()
                     {
-                        Id = null,
-                        SchoolclassName = "Aucune classe"
+                        Id = null
                     };
                     schoolclassesList.Add(noneSchoolclass);
 

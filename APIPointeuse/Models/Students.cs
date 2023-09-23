@@ -22,6 +22,6 @@ namespace APIPointeuse.Models
         public ICollection<ArrivalDateTime>? ArrivalDateTime { get; set; }
         public bool IsDeleted { get; set; }
         [NotMapped]
-        public List<Dictionary<string, DateTime?>> UniqueDates { get; set; }
+        public List<Dictionary<string, DateTime?>>? UniqueDates { get; set; }
     }
 }

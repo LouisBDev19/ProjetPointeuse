@@ -23,7 +23,7 @@ namespace ApplicationWebPointeuse.Controllers
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var studentDataList = JsonConvert.DeserializeObject<List<Students>>(content);
-                ViewData["Students"] = studentDataList;
+                    ViewData["Students"] = studentDataList;
             }
             else
             {

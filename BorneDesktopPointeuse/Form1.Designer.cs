@@ -30,9 +30,9 @@
         {
             components = new System.ComponentModel.Container();
             pictureBox = new PictureBox();
-            txtQRCode = new TextBox();
             timer1 = new System.Windows.Forms.Timer(components);
             lblMessage = new Label();
+            txtQRCode = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             SuspendLayout();
             // 
@@ -44,14 +44,6 @@
             pictureBox.Size = new Size(544, 486);
             pictureBox.TabIndex = 2;
             pictureBox.TabStop = false;
-            // 
-            // txtQRCode
-            // 
-            txtQRCode.Location = new Point(1170, 445);
-            txtQRCode.Multiline = true;
-            txtQRCode.Name = "txtQRCode";
-            txtQRCode.Size = new Size(474, 297);
-            txtQRCode.TabIndex = 4;
             // 
             // timer1
             // 
@@ -70,13 +62,23 @@
             lblMessage.Text = "Bienvenue à l'école 3iL ! Veuillez scanner votre QR Code en l'approchant de la caméra";
             lblMessage.TextAlign = ContentAlignment.TopCenter;
             // 
+            // txtQRCode
+            // 
+            txtQRCode.AutoSize = true;
+            txtQRCode.Font = new Font("Segoe UI Black", 20.1F, FontStyle.Bold, GraphicsUnit.Point);
+            txtQRCode.Location = new Point(875, 495);
+            txtQRCode.Name = "txtQRCode";
+            txtQRCode.Size = new Size(703, 89);
+            txtQRCode.TabIndex = 6;
+            txtQRCode.Text = "En attente de scan...";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(2095, 1155);
-            Controls.Add(lblMessage);
             Controls.Add(txtQRCode);
+            Controls.Add(lblMessage);
             Controls.Add(pictureBox);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
@@ -90,8 +92,8 @@
 
         #endregion
         private PictureBox pictureBox;
-        private TextBox txtQRCode;
         private System.Windows.Forms.Timer timer1;
         private Label lblMessage;
+        private Label txtQRCode;
     }
 }

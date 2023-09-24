@@ -14,12 +14,14 @@ namespace BorneDesktopPointeuse
     {
         private TcpListener tcpListener;
         private Thread listenerThread;
+        private System.Windows.Forms.Timer textTimer = new System.Windows.Forms.Timer();
         public Form1()
         {
             InitializeComponent();
 
             listenerThread = new Thread(StartListening);
             listenerThread.Start();
+            textTimer.Interval = 2000;
         }
 
         FilterInfoCollection filterInfoCollection;
@@ -86,14 +88,35 @@ namespace BorneDesktopPointeuse
                                 var arrivalDateTimeResponse = await _httpClient.PostAsync("https://localhost:7026/api/ArrivalDateTime/addArrivalDateTime", arrivalDateTimeContent);
                                 if (arrivalDateTimeResponse.IsSuccessStatusCode)
                                 {
-                                    txtQRCode.Text = "Successful!";
+                                    txtQRCode.Text = "Emargement enregistré !";
+                                    txtQRCode.ForeColor = Color.Green;
+                                    //txtQRCode.Text += qrCodeContent.ToString();
                                 }
                                 else
                                 {
-                                    txtQRCode.Text = "Expired!";
+                                    txtQRCode.Text = "Problème d'enregistrement.";
+                                    txtQRCode.ForeColor = Color.Red;
+                                    //txtQRCode.Text += qrCodeContent.ToString();
                                 }
                             }
+                            else
+                            {
+                                txtQRCode.Text = "Votre QR code est expiré !";
+                                txtQRCode.ForeColor = Color.Orange;
+                            }
                         }
+                        else
+                        {
+                            txtQRCode.Text = "Votre QR code n'est pas valide !";
+                            txtQRCode.ForeColor = Color.Red;
+                        }
+                        textTimer.Start();
+                        textTimer.Tick += (sender, e) =>
+                        {
+                            txtQRCode.Text = "En attente de scan...";
+                            txtQRCode.ForeColor = Color.Black;
+                            textTimer.Stop();
+                        };
                     }
                 }
             }

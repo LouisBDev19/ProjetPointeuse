@@ -28,8 +28,6 @@ namespace ApplicationWebPointeuse.Common
             if (datesPeriod?.Count > 0)
             {
                 List<DayOfWeek> excludedDays = new List<DayOfWeek>();
-                excludedDays.Add(DayOfWeek.Saturday);
-                excludedDays.Add(DayOfWeek.Sunday);
 
                 DateTime startDate = default(DateTime);
                 DateTime endDate = default(DateTime);

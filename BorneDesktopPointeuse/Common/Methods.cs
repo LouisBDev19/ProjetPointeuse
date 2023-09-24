@@ -35,6 +35,11 @@ namespace BorneDesktopPointeuse.Common
                 return null;
             }
 
+            if(arrivalDate <= DateTime.Now)
+            {
+                return null;
+            }
+
             ArrivalDateTime arrivalDateTime = new ArrivalDateTime
             {
                 IdStudent = id,

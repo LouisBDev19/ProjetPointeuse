@@ -252,6 +252,17 @@ namespace APIPointeuse.Controllers
             return schoolclasses != null;
         }
 
+        // GET: api/<SchoolclassesController>
+        [HttpGet]
+        [Route("getSchoolclassId/{id}")]
+        public async Task<bool> IsSchoolclassIdExist(int id)
+        {
+            var schoolclass = await _dataContext.Schoolclasses
+                                             .FirstOrDefaultAsync(sc => sc.Id == id);
+
+            return schoolclass != null;
+        }
+
 
         // POST api/<SchoolclassesController>
         [HttpPost]

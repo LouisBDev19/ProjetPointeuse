@@ -362,7 +362,7 @@ namespace ApplicationDesktopPointeuse
             }
         }
 
-        private void CSVImport(object sender, RoutedEventArgs e)
+        private async void CSVImport(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Fichiers CSV (*.csv)|*.csv|Tous les fichiers (*.*)|*.*";
@@ -383,8 +383,27 @@ namespace ApplicationDesktopPointeuse
                         int? IdSchoolclass = null;
                         int.TryParse(CSVdata[i][3], out int Id);
                         IdSchoolclass = Id;
+                        bool isSchoolclassExist = false;
 
-                        Students student = new Students()
+                        if (IdSchoolclass != null)
+                        {
+                            using (HttpClient _httpClient = new HttpClient())
+                            {
+                                var schoolclassResponse = await _httpClient.GetAsync($"https://localhost:7026/api/Schoolclasses/getSchoolclassId/{IdSchoolclass}");
+
+                                if (schoolclassResponse.IsSuccessStatusCode)
+                                {
+                                    isSchoolclassExist = await schoolclassResponse.Content.ReadAsAsync<bool>();
+                                }
+                            }
+                        }
+
+                        if (!isSchoolclassExist)
+                        {
+                            IdSchoolclass = null;
+                        }
+
+                            Students student = new Students()
                         {
                             FirstName = CSVdata[i][0],
                             LastName = CSVdata[i][1],

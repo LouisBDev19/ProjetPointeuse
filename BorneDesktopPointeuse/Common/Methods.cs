@@ -43,7 +43,7 @@ namespace BorneDesktopPointeuse.Common
             ArrivalDateTime arrivalDateTime = new ArrivalDateTime
             {
                 IdStudent = id,
-                ArrivalSavedDate = arrivalDate,
+                ArrivalSavedDate = DateTime.Now,
             };
 
             return arrivalDateTime;

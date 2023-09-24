@@ -1,4 +1,6 @@
 using ApplicationMobilePointeuse.Common;
+using ApplicationMobilePointeuse.Models;
+using Newtonsoft.Json;
 using QRCoder;
 
 namespace ApplicationMobilePointeuse.Views
@@ -69,21 +71,35 @@ namespace ApplicationMobilePointeuse.Views
         {
             try
             {
-                string qrCodeContent = "3|" + DateTime.Now.AddMinutes(2);
-                var response = await httpClient.GetAsync(devSslHelper.DevServerRootUrl + $"/api/EncryptionDecryption/encrypt?plainText={qrCodeContent}");
+                var studentResponse = await httpClient.GetAsync(devSslHelper.DevServerRootUrl + "/api/Students/getRandomStudent");
 
-                if (response.IsSuccessStatusCode)
+                if (studentResponse.IsSuccessStatusCode)
                 {
-                    string content = await response.Content.ReadAsStringAsync();
-                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.L);
-                    PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
-                    byte[] qrCodeBytes = qrCode.GetGraphic(20);
-                    return ImageSource.FromStream(() => new MemoryStream(qrCodeBytes));
+                    string studentContent = await studentResponse.Content.ReadAsStringAsync();
+                    var student = JsonConvert.DeserializeObject<Students>(studentContent);
+
+                    DateTime expirationDate = DateTime.Now.AddMinutes(2);
+                    string qrCodeContent = student.Id + "|" + expirationDate;
+                    var response = await httpClient.GetAsync(devSslHelper.DevServerRootUrl + $"/api/EncryptionDecryption/encrypt?plainText={qrCodeContent}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.L);
+                        PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                        byte[] qrCodeBytes = qrCode.GetGraphic(20);
+                        QRCodeInfos.Text = student.StudentName + " | Expire le : " + expirationDate.ToString("MM/dd/yyyy HH:mm:ss");
+                        return ImageSource.FromStream(() => new MemoryStream(qrCodeBytes));
+                    }
+                    else
+                    {
+                        await DisplayAlert("Erreur", "Échec de la requête HTTP pour générer le QR code.", "OK");
+                    }
                 }
                 else
                 {
-                    await DisplayAlert("Erreur", "Échec de la requête HTTP pour générer le QR code.", "OK");
+                    await DisplayAlert("Erreur", "Échec de la requête HTTP pour récupérer l'élève connecté.", "OK");
                 }
             }
             catch (Exception ex)
@@ -99,6 +115,7 @@ namespace ApplicationMobilePointeuse.Views
             MyQRCode.Source = "qrcode";
             QRCodeButton.IsVisible = true;
             QRCodeText.Text = "Vous pouvez générer un QR Code en appuyant sur le bouton ci-dessous";
+            QRCodeInfos.Text = "";
         }
 
         protected override void OnAppearing()

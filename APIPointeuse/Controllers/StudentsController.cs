@@ -214,6 +214,33 @@ namespace APIPointeuse.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [Route("getRandomStudent")]
+        public async Task<ActionResult<Students>> GetRandomStudent()
+        {
+            var students = await _dataContext.Students
+                                 .Where(s => !s.IsDeleted)
+                                 .Select(s => new
+                                 {
+                                     s.Id,
+                                     s.FirstName,
+                                     s.LastName
+                                 })
+                                 .ToListAsync();
+
+            if (students.Count == 0)
+            {
+                return NotFound("Aucun étudiant n'est disponible.");
+            }
+
+            Random random = new Random();
+            int randomIndex = random.Next(0, students.Count);
+
+            var randomStudent = students[randomIndex];
+
+            return Ok(randomStudent);
+        }
+
         // GET: api/<StudentsController>
         [HttpGet]
         [Route("getDuplicateEmailStudent/{email}")]

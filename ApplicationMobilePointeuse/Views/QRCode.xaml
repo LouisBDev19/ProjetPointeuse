@@ -26,6 +26,12 @@
                 FontSize="18"
                 HorizontalOptions="Center" />
 
+            <Label
+                x:Name="QRCodeInfos"
+                Text=""
+                FontSize="18"
+                HorizontalOptions="Center" />
+
             <Button
                 x:Name="QRCodeButton"
                 Text="Générer un QR Code"

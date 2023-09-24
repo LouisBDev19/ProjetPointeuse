@@ -1,48 +1,110 @@
+using ApplicationMobilePointeuse.Common;
 using QRCoder;
 
-namespace ApplicationMobilePointeuse.Views;
-
-public partial class QRCode : ContentPage
+namespace ApplicationMobilePointeuse.Views
 {
-	public QRCode()
-	{
-		InitializeComponent();
-    }
-
-    private void GetQRCode(object sender, EventArgs e)
+    public partial class QRCode : ContentPage
     {
-        ImageSource qrCode = GenerateQRCode();
-        if(!qrCode.IsEmpty)
+        private HttpClient httpClient;
+        private readonly DevHttpsConnectionHelper devSslHelper;
+        private const double TargetLatitude = 45.8189;
+        private const double TargetLongitude = 1.2720;
+        private const double RadiusMeters = 60;
+
+        public QRCode()
         {
-            MyQRCode.Source = qrCode;
-            QRCodeButton.IsVisible = false;
-            QRCodeText.Text = "QR Code généré avec succès ! Veuillez désormais le scanner";
+            InitializeComponent();
+            devSslHelper = new DevHttpsConnectionHelper(sslPort: 7026);
+            httpClient = devSslHelper.HttpClient;
         }
-    }
 
-    public static ImageSource GenerateQRCode()
-    {
-        QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeData qrCodeData = qrGenerator.CreateQrCode(DeviceInfo.Current.Platform.ToString(), QRCodeGenerator.ECCLevel.L);
+        private async void GetQRCode(object sender, EventArgs e)
+        {
+            try
+            {
+                var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+                if (status != PermissionStatus.Granted)
+                {
+                    status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                }
 
-        PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
-        byte[] qrCodeBytes = qrCode.GetGraphic(20);
-        ImageSource qrImageSource = ImageSource.FromStream(() => new MemoryStream(qrCodeBytes));
+                if (status == PermissionStatus.Granted)
+                {
+                    var location = await Geolocation.GetLocationAsync();
+                    if (location != null)
+                    {
+                        bool isWithinRadius = Methods.IsWithinRadius(location.Latitude, location.Longitude, TargetLatitude, TargetLongitude, RadiusMeters);
+                        if (isWithinRadius)
+                        {
+                            ImageSource qrCode = await GenerateQRCodeAsync();
+                            if (qrCode != null)
+                            {
+                                MyQRCode.Source = qrCode;
+                                QRCodeButton.IsVisible = false;
+                                QRCodeText.Text = "QR Code généré avec succès ! Veuillez désormais le scanner";
+                            }
+                        }
+                        else
+                        {
+                            await DisplayAlert("Erreur", "Rapprochez vous de l'école 3iL pour générer le QR code.", "OK");
+                        }
+                    }
+                    else
+                    {
+                        await DisplayAlert("Erreur", "Impossible d'obtenir la localisation actuelle.", "OK");
+                    }
+                }
+                else
+                {
+                    await DisplayAlert("Erreur", "La permission de localisation n'a pas été accordée.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Erreur", "Une erreur s'est produite lors de la récupération de la localisation : " + ex.Message, "OK");
+            }
+        }
 
-        return qrImageSource;
+        private async Task<ImageSource> GenerateQRCodeAsync()
+        {
+            try
+            {
+                string qrCodeContent = "3|" + DateTime.Now.AddMinutes(2);
+                var response = await httpClient.GetAsync(devSslHelper.DevServerRootUrl + $"/api/EncryptionDecryption/encrypt?plainText={qrCodeContent}");
 
-    }
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.L);
+                    PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                    byte[] qrCodeBytes = qrCode.GetGraphic(20);
+                    return ImageSource.FromStream(() => new MemoryStream(qrCodeBytes));
+                }
+                else
+                {
+                    await DisplayAlert("Erreur", "Échec de la requête HTTP pour générer le QR code.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Erreur", "Une erreur s'est produite lors de la génération du QR code : " + ex.Message, "OK");
+            }
 
-    public void ResetDisplay()
-    {
-        MyQRCode.Source = "qrcode";
-        QRCodeButton.IsVisible = true;
-        QRCodeText.Text = "Vous pouvez générer un QR Code en appuyant sur le bouton ci-dessous";
-    }
+            return null;
+        }
 
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-        ResetDisplay();
+        private void ResetDisplay()
+        {
+            MyQRCode.Source = "qrcode";
+            QRCodeButton.IsVisible = true;
+            QRCodeText.Text = "Vous pouvez générer un QR Code en appuyant sur le bouton ci-dessous";
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            ResetDisplay();
+        }
     }
 }

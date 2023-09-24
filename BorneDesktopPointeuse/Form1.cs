@@ -1,4 +1,7 @@
 using AForge.Video.DirectShow;
+using APIPointeuse.Models;
+using BorneDesktopPointeuse.Common;
+using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -59,15 +62,39 @@ namespace BorneDesktopPointeuse
             tcpListener.Stop();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private async void timer1_Tick(object sender, EventArgs e)
         {
             if (pictureBox.Image != null)
             {
                 BarcodeReader barcodeReader = new BarcodeReader();
-                Result result = barcodeReader.Decode((Bitmap)pictureBox.Image);
-                if (result != null)
+                Result qrCodeContent = barcodeReader.Decode((Bitmap)pictureBox.Image);
+                if (qrCodeContent != null)
                 {
-                    txtQRCode.Text = result.ToString();
+                    string encodedCipherText = System.Net.WebUtility.UrlEncode(qrCodeContent.ToString());
+                    using (HttpClient _httpClient = new HttpClient())
+                    {
+                        var response = await _httpClient.GetAsync("https://localhost:7026/api/EncryptionDecryption/decrypt?cipherText=" + encodedCipherText);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            ArrivalDateTime arrivalData = Methods.ExplodeStringToArrivalDateTime(content.ToString(), '|');
+
+                            if (arrivalData != null)
+                            {
+                                var json = JsonConvert.SerializeObject(arrivalData);
+                                var arrivalDateTimeContent = new StringContent(json, Encoding.UTF8, "application/json");
+                                var arrivalDateTimeResponse = await _httpClient.PostAsync("https://localhost:7026/api/ArrivalDateTime/addArrivalDateTime", arrivalDateTimeContent);
+                                if (arrivalDateTimeResponse.IsSuccessStatusCode)
+                                {
+                                    txtQRCode.Text = "Successful!";
+                                }
+                                else
+                                {
+                                    txtQRCode.Text = "Expired!";
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

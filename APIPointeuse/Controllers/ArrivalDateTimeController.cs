@@ -83,7 +83,7 @@ namespace APIPointeuse.Controllers
             _dataContext.ArrivalDateTime.Add(arrivalDateTime);
             await _dataContext.SaveChangesAsync();
 
-            return Ok(await _dataContext.ArrivalDateTime.ToListAsync());
+            return Ok(await _dataContext.ArrivalDateTime.OrderByDescending(a => a.Id).FirstOrDefaultAsync());
         }
 
         // PUT api/<ArrivalDateTimeController>/5

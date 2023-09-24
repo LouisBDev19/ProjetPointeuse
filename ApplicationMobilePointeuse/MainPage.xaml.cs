@@ -2,23 +2,29 @@
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private WebAuthenticatorResult authResult;
 
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private async void ConnectionClicked(object sender, EventArgs e)
         {
-            count++;
+            try
+            {
+                WebAuthenticatorResult authResult = await WebAuthenticator.Default.AuthenticateAsync(
+                    new Uri("https://moodle.3il.fr/"),
+                    new Uri("myapp://"));
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+                string accessToken = authResult?.AccessToken;
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+                // Do something with the token
+            }
+            catch (TaskCanceledException ex)
+            {
+                string accessToken = authResult?.AccessToken;
+            }
         }
     }
 }

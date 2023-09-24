@@ -50,11 +50,15 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\Images\home.svg" />
+	  <None Remove="Resources\Images\logo_troisil_small.svg" />
 	  <None Remove="Resources\Images\qrcode.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="QRCoder" Version="1.4.3" />
+	  <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

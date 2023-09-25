@@ -10,6 +10,8 @@ using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -31,6 +33,7 @@ namespace ApplicationDesktopPointeuse
     {
         private ObservableCollection<Students> allStudents;
         public ObservableCollection<Schoolclasses> schoolclassesList { get; set; }
+        private SecureString token;
         public StudentsPage()
         {
             InitializeComponent();
@@ -40,6 +43,7 @@ namespace ApplicationDesktopPointeuse
             ArchiveStudentButton.Visibility = Visibility.Hidden;
             DeleteStudentButton.Visibility = Visibility.Hidden;
             schoolclassesList = new ObservableCollection<Schoolclasses>();
+            token = TokenManager.Token;
         }
 
         public async void Window_Loaded(object sender, RoutedEventArgs e)

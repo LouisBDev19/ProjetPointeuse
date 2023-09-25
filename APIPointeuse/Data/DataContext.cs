@@ -18,5 +18,6 @@ namespace APIPointeuse.Data
         public DbSet<ArrivalDateTime> ArrivalDateTime { get; set; }
         public DbSet<StudentsDevice> StudentsDevice { get; set; }
         public DbSet<Periods> Periods { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
